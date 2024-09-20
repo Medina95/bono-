@@ -55,7 +55,7 @@ Para ejecutar este proyecto, necesitarás tener instalado:
 4. Verá que el servidor está listo y corriendo sobre el puerto 36000
 
     - http://localhost:36000/
-    - Introduce un comando de tipo bbl(100,4,6,3) o de la clase math en el campo de texto y haz click en el boton submit para ejecutar la operación 
+    - Introduce un comando de tipo bbl(100,4,6,3) o de la clase math en el campo de texto y haz clic en el botón submit para ejecutar la operación 
 
 4. Puedes interactuar con los endpoints RESTful (/api) con:
    - http://localhost:35000/compreFlex?comando=max(1,9)
