@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.io.*;
-import java.util.Stack;
+import java.util.Arrays;
 
-public class cacluladora {
+public class calculadora {
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         try {
@@ -46,11 +46,12 @@ public class cacluladora {
 
             URI requestURL = getReqURl(firstLine);
 
+
             if (requestURL.getPath().startsWith("/compreFlex")) {
                 outputLine = "HTTP/1.1 200 OK\r\n"
                         + "Content-Type: application/json\r\n"
                         + "\r\n"
-                        + "'{\"name\":\"John\", \"age\":30, \"car\":null}'\n";
+                        + calcular(getcommand(requestURL));
 
             }else {
                 outputLine = htmlclient();
@@ -85,26 +86,7 @@ public class cacluladora {
                 "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                 "    </head>\n" +
                 "    <body>\n" +
-                "        <h1>Form with GET</h1>\n" +
-                "        <form action=\"/hello\">\n" +
-                "            <label for=\"name\">Name:</label><br>\n" +
-                "            <input type=\"text\" id=\"name\" name=\"name\" value=\"max(1,2)\"><br><br>\n" +
-                "            <input type=\"button\" value=\"Submit\" onclick=\"loadGetMsg()\">\n" +
-                "        </form> \n" +
-                "        <div id=\"getrespmsg\"></div>\n" +
-                "\n" +
-                "        <script>\n" +
-                "            function loadGetMsg() {\n" +
-                "                let nameVar = document.getElementById(\"name\").value;\n" +
-                "                const xhttp = new XMLHttpRequest();\n" +
-                "                xhttp.onload = function() {\n" +
-                "                    document.getElementById(\"getrespmsg\").innerHTML =\n" +
-                "                    this.responseText;\n" +
-                "                }\n" +
-                "                xhttp.open(\"GET\", \"/computar?name=\"+nameVar);\n" +
-                "                xhttp.send();\n" +
-                "            }\n" +
-                "        </script>\n" +
+                "        <h1>esta es la calculadora </h1>\n" +
                 "</html>";
         return htmlcode;
 
@@ -128,21 +110,50 @@ public class cacluladora {
         }
     }
 
-    private static void getcommand (URI fistline){
+    private static String getcommand (URI fistline){//max(1,2)
       String url= fistline. getQuery().split("=")[1];
+     return url;
+    }
 
+    public static String calcular(String comando) {
+        String methodName = comando.substring(0, comando.indexOf('('));
+        //System.out.println(methodName); max
+        String[] params = comando.substring(comando.indexOf('(') + 1, comando.indexOf(')')).split(",");
+        double[] arguments = Arrays.stream(params).mapToDouble(Double::parseDouble).toArray();
+        //System.out.println(params); [1,2]
+        try {
+            if(methodName.startsWith("bbl")){
+                bubbleSort(arguments);
+                return "{\"resultado\": " + Arrays.toString(arguments) + "}";
+            }else {
+                return MathReflexion(methodName, arguments);
+            }
+        } catch (Exception e) {
+            return "{\"resultado\": \"Error: " + e.getMessage() + "\"}";
+        }
     }
 
 
 
 
-    public static  String computerMathCommand(String command) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+//base para hacer reflexion visto en clase
+    public static  String MathReflexion (String methodName,double[] arguments) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Class c = Math.class;
-        Class[] paramTypes = {double.class};
+        Class[] paramTypes1 = {double.class};
+        Class[] paramTypes2 = {double.class,double.class};
 
-        Method method = c.getDeclaredMethod("abs", paramTypes);
-
-        String resp = (String) method.invoke(null, paramTypes);
-        return  resp;
+        // para 1 argumento
+        if (arguments.length == 1) {
+            Method method = c.getMethod(methodName, paramTypes1);
+            Object result = method.invoke(null, arguments[0]);
+            return "{\"resultado\": " + result.toString() + "}";
+            //para 2
+        } else if (arguments.length == 2) {
+            Method method = c.getMethod(methodName, paramTypes2);
+            Object result = method.invoke(null, arguments[0], arguments[1]);
+            return "{\"resultado\": " + result.toString() + "}";
+        } else {
+            return "{\"resultado\": \"Error\"}";
+        }
     }
 }

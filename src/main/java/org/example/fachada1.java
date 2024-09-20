@@ -46,6 +46,7 @@ public class fachada1 {
             if (requestURL.getPath().startsWith("/computar")) {
                 String response = HttpConexionExample.getResponse("/compreFlex?" + requestURL.getQuery());
                 outputLine = getOkResponse(response);
+
             }else {
                 outputLine = htmlclient();
             }
@@ -88,7 +89,7 @@ public class fachada1 {
                 "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                 "    </head>\n" +
                 "    <body>\n" +
-                "        <h1>Form with GET</h1>\n" +
+                "        <h1>Calculadora reflexiva :D</h1>\n" +
                 "        <form action=\"/hello\">\n" +
                 "            <label for=\"name\">Name:</label><br>\n" +
                 "            <input type=\"text\" id=\"name\" name=\"comando\" value=\"max(1,2)\"><br><br>\n" +
